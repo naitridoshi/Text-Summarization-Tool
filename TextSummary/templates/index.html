@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+{% block body %}<h1> THIS IS MY INDEX PAGE</h1>
+
+<div class="container">    
+    <form class="row g-3 needs-validation" enctype="multipart/form-data" method="post" action="/summarize">
+        {% csrf_token %}   
+        <div>
+            <label for="formFileLg" class="form-label">Upload PDF</label>
+            <input class="form-control form-control-lg" id="formFileLg" name="file" type="file" required>
+            <div class="invalid-feedback">
+                Please upload a file in .pdf format.
+            </div>
+        </div>
+
+        <div>
+            <div class="container">
+                <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock body %}
+    
+    

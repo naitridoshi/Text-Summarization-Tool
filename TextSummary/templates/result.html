@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Summarized Text{% endblock title %}
+{% block body %}
+<div class="container">
+    <div>
+        <h2>
+            Text Summary
+        </h2>
+    </div>
+</div>
+<div class="container">
+    
+    <h4>
+        <pre>
+            {{result}}
+        </pre>
+    </h4>
+</div>
+
+{% endblock body %}
