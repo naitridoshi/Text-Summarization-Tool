@@ -74,22 +74,23 @@ def summarize(request):
                         sent_frequency[sent] = word_frequency[w.text.lower()]
                     else:
                         sent_frequency[sent] += word_frequency[w.text.lower()]
-        sum = 0
-        maxi = 0
-        mini = 0
-        i = 0
-        j = 0
-        for sent in sents:
-            #     word= word_tokenize(sent)
-            #     i=len(word)
-            i = len(sent)
-            sum += len(sent)
-            maxi = max(i, j)
-            mini = min(i, j)
-            j = i
-        mean = sum//len(sents)
-        summary_length = (500//((maxi+mini)//2))
-        summary_length = int(summary_length)
+        # sum = 0
+        # maxi = 0
+        # mini = 0
+        # i = 0
+        # j = 0
+        # for sent in sents:
+        #     #     word= word_tokenize(sent)
+        #     #     i=len(word)
+        #     i = len(sent)
+        #     sum += len(sent)
+        #     maxi = max(i, j)
+        #     mini = min(i, j)
+        #     j = i
+        # mean = sum//len(sents)
+        # summary_length = (500//((maxi+mini)//2))
+        # summary_length = int(summary_length)
+        summary_length = int(len(sents)*0.4)
         summary = nlargest(summary_length, sent_frequency,
                            key=sent_frequency.get)
         final_summary = []
