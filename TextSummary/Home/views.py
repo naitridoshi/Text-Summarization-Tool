@@ -3,6 +3,8 @@ import fitz
 import spacy
 from heapq import nlargest
 from django.core.files.storage import FileSystemStorage
+from PIL import Image
+import pytesseract
 
 # Create your views here.
 
@@ -26,9 +28,26 @@ def summarize(request):
         file = fs.save(content=f, name=f.name)
         path = fs.path(file)
 
-        # 1. Text Extraction
-        with fitz.open(path) as doc:
-            text = "".join(page.get_text() for page in doc)
+        text = ""
+        try:
+            with fitz.open(path) as doc:
+                for page_num in range(len(doc)):
+                    page = doc.load_page(page_num)
+                    
+                    # First, try to get text directly
+                    page_text = page.get_text("text")
+                    if len(page_text) > 30:
+                        text += page_text
+                    else:
+                        # If no text, use OCR
+                        pix = page.get_pixmap()
+                        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                        text += pytesseract.image_to_string(img)
+
+        except Exception as e:
+            # Handle potential errors with file processing
+            return render(request, 'result.html', {'result_sentences': [f"Error processing file: {e}"]})
+
 
         # 2. NLP Processing with spaCy
         nlp = spacy.load('en_core_web_sm')
@@ -44,7 +63,7 @@ def summarize(request):
                     word_frequencies[word.text.lower()] += 1
         
         if not word_frequencies:
-             return render(request, 'result.html', {'result': "Could not generate summary from the document."})
+             return render(request, 'result.html', {'result_sentences': ["Could not generate summary from the document. It may be empty or contain only images."]})
 
         max_frequency = max(word_frequencies.values())
         for word in word_frequencies.keys():
