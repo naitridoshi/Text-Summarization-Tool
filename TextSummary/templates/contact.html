@@ -1,3 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}Contact Us{% endblock title %}
-{% block body %}<h1>THIS IS MY CONTACT PAGE</h1>{% endblock body %}
+{% block body %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="text-center mb-4">Contact Us</h1>
+        <p class="text-center">Have questions or feedback? We'd love to hear from you!</p>
+        <form>
+            <div class="mb-3">
+                <label for="name" class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Your Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" rows="5" required></textarea>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body %}

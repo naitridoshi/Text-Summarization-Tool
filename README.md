@@ -25,6 +25,7 @@ To run Text Summarization Tool locally and experience its functionalities, follo
 
 Clone the repository to your local machine.
 Install the required dependencies specified in the requirements.txt file.
+Download the NLTK 'punkt' tokenizer by running the following command in your terminal: `python -c "import nltk; nltk.download('punkt')"`
 Navigate to the project directory and run the Django development server.
 Access the web application through your preferred web browser.
 Upload a PDF file containing the text you wish to summarize.

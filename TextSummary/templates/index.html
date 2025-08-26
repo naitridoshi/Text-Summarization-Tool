@@ -1,26 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock title %}
-{% block body %}<h1> THIS IS MY INDEX PAGE</h1>
-
-<div class="container">    
-    <form class="row g-3 needs-validation" enctype="multipart/form-data" method="post" action="/summarize">
-        {% csrf_token %}   
-        <div>
-            <label for="formFileLg" class="form-label">Upload PDF</label>
-            <input class="form-control form-control-lg" id="formFileLg" name="file" type="file" required>
-            <div class="invalid-feedback">
-                Please upload a file in .pdf format.
-            </div>
-        </div>
-
-        <div>
-            <div class="container">
-                <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
-            </div>
-        </div>
-    </form>
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+        <h1 class="display-4 fw-bold">Summarize Your Documents</h1>
+        <p class="lead mb-4">Simply upload a PDF file and get a concise summary in seconds. Our tool uses advanced NLP to extract the most important information for you.</p>
+    </div>
 </div>
 
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">Upload Your PDF</h5>
+                <form enctype="multipart/form-data" method="post" action="/summarize">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input class="form-control form-control-lg" id="formFileLg" name="file" type="file" accept=".pdf" required>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" type="submit">Summarize</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock body %}
-    
-    

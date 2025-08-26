@@ -1,3 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}About Us{% endblock title %}
-{% block body %}<h1>THIS IS MY ABOUT PAGE</h1>{% endblock body %}
+{% block body %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="text-center mb-4">About Our Text Summarizer</h1>
+        <p class="lead">This tool is designed to help you quickly get the gist of long documents. Whether you're a student, a researcher, or a professional, you can use this tool to save time and get the key points from any PDF file.</p>
+        <p>We use advanced Natural Language Processing (NLP) techniques to analyze the text and identify the most important sentences. The result is a concise and readable summary that captures the essence of the original document.</p>
+        <h3 class="mt-5">Features</h3>
+        <ul>
+            <li>Extracts text from PDF files.</li>
+            <li>Summarizes text to a manageable length.</li>
+            <li>Uses state-of-the-art NLP models.</li>
+            <li>Free and easy to use.</li>
+        </ul>
+    </div>
+</div>
+{% endblock body %}

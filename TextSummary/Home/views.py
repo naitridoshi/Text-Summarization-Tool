@@ -1,14 +1,8 @@
-from django.shortcuts import render, HttpResponse
-import pandas as pd
-import numpy as np
+from django.shortcuts import render
 import fitz
 import spacy
-from spacy.lang.en.stop_words import STOP_WORDS
-from string import punctuation
-from nltk import word_tokenize
 from heapq import nlargest
 from django.core.files.storage import FileSystemStorage
-import io
 
 # Create your views here.
 
@@ -27,74 +21,49 @@ def contact(request):
 
 def summarize(request):
     if request.method == "POST":
-        # f = request.FILES['file']
         f = request.FILES['file']
         fs = FileSystemStorage()
-        filename, ext = str(f).split('.')
         file = fs.save(content=f, name=f.name)
-        fileurl = fs.url(file)
-        size = fs.size(file)
-        path = f"media\\{f.name}"
-        stopwords = list(STOP_WORDS)
-        nlp = spacy.load('en_core_web_sm')
-        doc = fitz.open(path)
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        doc = nlp(text)
-        from string import punctuation
-        punctuation = punctuation + '’\n“”'
-        updated_list = []
-        for word in doc:
-            if word.text.lower() not in stopwords:
-                if word.text.lower() not in punctuation:
-                    updated_list.append(word)
+        path = fs.path(file)
 
-        updated_text = ' '.join(str(l) for l in updated_list)
-        tokens = word_tokenize(updated_text)
-        word_frequency = {}
-        for word in tokens:
-            if word.lower() not in word_frequency.keys():
-                word_frequency[word.lower()] = 1
-            else:
-                word_frequency[word.lower()] += 1
-        max_frequency = max(word_frequency.values())
-        for word in word_frequency.keys():
-            word_frequency[word] = word_frequency[word]/max_frequency
-        sents = []
+        # 1. Text Extraction
+        with fitz.open(path) as doc:
+            text = "".join(page.get_text() for page in doc)
+
+        # 2. NLP Processing with spaCy
+        nlp = spacy.load('en_core_web_sm')
+        doc = nlp(text)
+
+        # 3. Word Frequency Calculation
+        word_frequencies = {}
+        for word in doc:
+            if not word.is_stop and not word.is_punct:
+                if word.text.lower() not in word_frequencies:
+                    word_frequencies[word.text.lower()] = 1
+                else:
+                    word_frequencies[word.text.lower()] += 1
+        
+        if not word_frequencies:
+             return render(request, 'result.html', {'result': "Could not generate summary from the document."})
+
+        max_frequency = max(word_frequencies.values())
+        for word in word_frequencies.keys():
+            word_frequencies[word] = word_frequencies[word] / max_frequency
+
+        # 4. Sentence Scoring
+        sentence_scores = {}
         for sent in doc.sents:
-            #     sent=remove_newline(sent.text)
-            sents.append(sent)
-        sent_frequency = {}
-        for sent in sents:
-            #     word=word_tokenize(sent)
-            for w in sent:
-                if w.text.lower() in word_frequency.keys():
-                    if sent not in sent_frequency.keys():
-                        sent_frequency[sent] = word_frequency[w.text.lower()]
+            for word in sent:
+                if word.text.lower() in word_frequencies:
+                    if sent not in sentence_scores:
+                        sentence_scores[sent] = word_frequencies[word.text.lower()]
                     else:
-                        sent_frequency[sent] += word_frequency[w.text.lower()]
-        # sum = 0
-        # maxi = 0
-        # mini = 0
-        # i = 0
-        # j = 0
-        # for sent in sents:
-        #     #     word= word_tokenize(sent)
-        #     #     i=len(word)
-        #     i = len(sent)
-        #     sum += len(sent)
-        #     maxi = max(i, j)
-        #     mini = min(i, j)
-        #     j = i
-        # mean = sum//len(sents)
-        # summary_length = (500//((maxi+mini)//2))
-        # summary_length = int(summary_length)
-        summary_length = int(len(sents)*0.4)
-        summary = nlargest(summary_length, sent_frequency,
-                           key=sent_frequency.get)
-        final_summary = []
-        for word in summary:
-            final_summary.append(word)
-        summary = ' '.join(str(l) for l in final_summary)
-        return render(request, 'result.html', {'result': summary})
+                        sentence_scores[sent] += word_frequencies[word.text.lower()]
+
+        # 5. Summarization
+        summary_length = int(len(list(doc.sents)) * 0.4)
+        summary_sentences = nlargest(summary_length, sentence_scores, key=sentence_scores.get)
+        
+        final_summary = [sent.text for sent in summary_sentences]
+
+        return render(request, 'result.html', {'result_sentences': final_summary})
