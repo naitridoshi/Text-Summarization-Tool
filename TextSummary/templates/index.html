@@ -13,17 +13,33 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <h5 class="card-title text-center mb-4">Upload Your PDF</h5>
-                <form enctype="multipart/form-data" method="post" action="/summarize">
+                <form enctype="multipart/form-data" method="post" action="/summarize" id="summarizeForm">
                     {% csrf_token %}
                     <div class="mb-3">
                         <input class="form-control form-control-lg" id="formFileLg" name="file" type="file" accept=".pdf" required>
                     </div>
                     <div class="d-grid">
-                        <button class="btn btn-primary btn-lg" type="submit">Summarize</button>
+                        <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            <span class="button-text">Summarize</span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('summarizeForm').addEventListener('submit', function() {
+        var submitBtn = document.getElementById('submitBtn');
+        var spinner = submitBtn.querySelector('.spinner-border');
+        var buttonText = submitBtn.querySelector('.button-text');
+
+        // Disable button and show spinner
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.textContent = 'Summarizing...';
+    });
+</script>
 {% endblock body %}
