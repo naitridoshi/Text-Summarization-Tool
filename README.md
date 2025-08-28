@@ -1,5 +1,9 @@
 # Text Summarization Tool
 
+This project is live on Hugging Face Spaces. Try it out here:
+
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/naitri/Text-Summarization-Tool)
+
 Text Summarization Tool is a web application built with Django that extracts text from PDF files and generates concise summaries using Natural Language Processing (NLP).
 
 ## About The Project
